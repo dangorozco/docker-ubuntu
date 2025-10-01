@@ -1,0 +1,3 @@
+/workspace/docker-ubuntu/project-1/build/CMakeFiles/hello.dir
+/workspace/docker-ubuntu/project-1/build/CMakeFiles/edit_cache.dir
+/workspace/docker-ubuntu/project-1/build/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,1 @@
+/usr/bin/aarch64-linux-gnu-gcc CMakeFiles/hello.dir/hello.c.o -o hello 
