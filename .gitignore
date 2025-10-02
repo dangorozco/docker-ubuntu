@@ -1,2 +1,25 @@
-# Ignore build directory
-build/
+# CMake build directories
+/build/
+/build-tests/
+/build-*/
+
+# Compiled object files and libraries
+*.o
+*.a
+*.so
+*.dll
+*.dylib
+*.exe
+
+# Coverage files
+*.gcno
+*.gcda
+*.gcov
+coverage.info
+
+# Test result files
+results.xml
+
+# Generated coverage HTML
+lcov-report/
+coverage/
