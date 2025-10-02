@@ -25,10 +25,13 @@ endif()
 # Coverage support
 if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
     message(STATUS "Enabling code coverage flags")
-    add_compile_options(-O0 -g --coverage -fprofile-arcs -ftest-coverage)
-    add_link_options(--coverage -fprofile-arcs -ftest-coverage)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g --coverage -fprofile-arcs -ftest-coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g --coverage -fprofile-arcs -ftest-coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 
-    # Ensure executables inherit coverage flags
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
+    # Ensure test_hello is instrumented
+    if(TARGET test_hello)
+        target_compile_options(test_hello PRIVATE -O0 -g --coverage -fprofile-arcs -ftest-coverage)
+        target_link_libraries(test_hello PRIVATE gcov)
+    endif()
 endif()

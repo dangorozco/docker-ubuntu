@@ -62,9 +62,16 @@ jobs:
       - name: Run tests (JUnit XML + coverage)
         working-directory: build-tests
         run: |
+          export GCOV_PREFIX=$(pwd)
+          export GCOV_PREFIX_STRIP=2
           ./test_hello --gtest_output=xml:results.xml
           echo "Checking coverage files..."
           find . -name "*.gc*" || echo "No .gcda files found!"
+
+      - name: Verify coverage artifacts
+        run: |
+          echo "Listing .gcno and .gcda after test run"
+          find build-tests -name "*.gc*"
 
       - name: Publish test results to GitHub
         uses: dorny/test-reporter@v1
@@ -73,11 +80,6 @@ jobs:
           name: gtest-report
           path: build-tests/results.xml
           reporter: jest-junit
-
-      - name: Verify coverage artifacts
-        run: |
-          echo "Looking for gcov files..."
-          find build-tests -name "*.gcno" -o -name "*.gcda"
 
       - name: Generate coverage report
         working-directory: build-tests
