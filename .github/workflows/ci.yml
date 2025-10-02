@@ -74,6 +74,11 @@ jobs:
           path: build-tests/results.xml
           reporter: jest-junit
 
+      - name: Verify coverage artifacts
+        run: |
+          echo "Looking for gcov files..."
+          find build-tests -name "*.gcno" -o -name "*.gcda"
+
       - name: Generate coverage report
         working-directory: build-tests
         run: |
