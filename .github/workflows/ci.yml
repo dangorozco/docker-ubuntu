@@ -36,7 +36,7 @@ jobs:
       - name: Run clang-tidy
         run: clang-tidy hello.c -- -I.
 
-    # Native GCC build for tests + coverage
+  # Native GCC build for tests + coverage
   test:
     runs-on: ubuntu-22.04
 
@@ -62,8 +62,6 @@ jobs:
       - name: Run tests (JUnit XML + coverage)
         working-directory: build-tests
         run: |
-          export GCOV_PREFIX=$(pwd)
-          export GCOV_PREFIX_STRIP=2
           ./test_hello --gtest_output=xml:results.xml
           echo "Checking coverage files..."
           find . -name "*.gc*" || echo "No .gcda files found!"
@@ -81,6 +79,7 @@ jobs:
         run: |
           echo "Looking for .gcda before lcov"
           find . -name "*.gc*"
+          # Capture coverage recursively from all build outputs
           lcov --capture --directory . --output-file coverage.info
           lcov --remove coverage.info '/usr/*' --output-file coverage.info
           lcov --list coverage.info
