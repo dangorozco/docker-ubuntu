@@ -21,6 +21,13 @@ jobs:
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
             cmake make g++ gcc libgtest-dev clang-tidy lcov
 
+      - name: Build and install GoogleTest
+        run: |
+          cd /usr/src/gtest
+          sudo cmake .
+          sudo make -j$(nproc)
+          sudo cp lib/*.a /usr/lib
+
       - name: Configure project (ARM toolchain)
         run: cmake -B build -DCMAKE_TOOLCHAIN_FILE=arm64-toolchain.cmake -DCMAKE_BUILD_TYPE=Coverage
 
