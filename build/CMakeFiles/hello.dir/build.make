@@ -73,15 +73,15 @@ CMakeFiles/hello.dir/hello.c.o: CMakeFiles/hello.dir/flags.make
 CMakeFiles/hello.dir/hello.c.o: ../hello.c
 CMakeFiles/hello.dir/hello.c.o: CMakeFiles/hello.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspace/docker-ubuntu/project-1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/hello.dir/hello.c.o"
-	/usr/bin/aarch64-linux-gnu-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/hello.dir/hello.c.o -MF CMakeFiles/hello.dir/hello.c.o.d -o CMakeFiles/hello.dir/hello.c.o -c /workspace/docker-ubuntu/project-1/hello.c
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/hello.dir/hello.c.o -MF CMakeFiles/hello.dir/hello.c.o.d -o CMakeFiles/hello.dir/hello.c.o -c /workspace/docker-ubuntu/project-1/hello.c
 
 CMakeFiles/hello.dir/hello.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/hello.dir/hello.c.i"
-	/usr/bin/aarch64-linux-gnu-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /workspace/docker-ubuntu/project-1/hello.c > CMakeFiles/hello.dir/hello.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /workspace/docker-ubuntu/project-1/hello.c > CMakeFiles/hello.dir/hello.c.i
 
 CMakeFiles/hello.dir/hello.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/hello.dir/hello.c.s"
-	/usr/bin/aarch64-linux-gnu-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /workspace/docker-ubuntu/project-1/hello.c -o CMakeFiles/hello.dir/hello.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /workspace/docker-ubuntu/project-1/hello.c -o CMakeFiles/hello.dir/hello.c.s
 
 # Object files for target hello
 hello_OBJECTS = \

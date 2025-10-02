@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /workspace/docker-ubuntu/project-1/build
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -129,12 +139,26 @@ hello/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/hello.dir/build.make CMakeFiles/hello.dir/build
 .PHONY : hello/fast
 
+#=============================================================================
+# Target rules for targets named test_hello
+
+# Build rule for target.
+test_hello: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_hello
+.PHONY : test_hello
+
+# fast build rule for target.
+test_hello/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_hello.dir/build.make CMakeFiles/test_hello.dir/build
+.PHONY : test_hello/fast
+
 hello.o: hello.c.o
 .PHONY : hello.o
 
 # target to build an object file
 hello.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/hello.dir/build.make CMakeFiles/hello.dir/hello.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_hello.dir/build.make CMakeFiles/test_hello.dir/hello.c.o
 .PHONY : hello.c.o
 
 hello.i: hello.c.i
@@ -143,6 +167,7 @@ hello.i: hello.c.i
 # target to preprocess a source file
 hello.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/hello.dir/build.make CMakeFiles/hello.dir/hello.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_hello.dir/build.make CMakeFiles/test_hello.dir/hello.c.i
 .PHONY : hello.c.i
 
 hello.s: hello.c.s
@@ -151,7 +176,32 @@ hello.s: hello.c.s
 # target to generate assembly for a file
 hello.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/hello.dir/build.make CMakeFiles/hello.dir/hello.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_hello.dir/build.make CMakeFiles/test_hello.dir/hello.c.s
 .PHONY : hello.c.s
+
+tests/test_hello.o: tests/test_hello.cpp.o
+.PHONY : tests/test_hello.o
+
+# target to build an object file
+tests/test_hello.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_hello.dir/build.make CMakeFiles/test_hello.dir/tests/test_hello.cpp.o
+.PHONY : tests/test_hello.cpp.o
+
+tests/test_hello.i: tests/test_hello.cpp.i
+.PHONY : tests/test_hello.i
+
+# target to preprocess a source file
+tests/test_hello.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_hello.dir/build.make CMakeFiles/test_hello.dir/tests/test_hello.cpp.i
+.PHONY : tests/test_hello.cpp.i
+
+tests/test_hello.s: tests/test_hello.cpp.s
+.PHONY : tests/test_hello.s
+
+# target to generate assembly for a file
+tests/test_hello.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_hello.dir/build.make CMakeFiles/test_hello.dir/tests/test_hello.cpp.s
+.PHONY : tests/test_hello.cpp.s
 
 # Help Target
 help:
@@ -161,10 +211,15 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... test"
 	@echo "... hello"
+	@echo "... test_hello"
 	@echo "... hello.o"
 	@echo "... hello.i"
 	@echo "... hello.s"
+	@echo "... tests/test_hello.o"
+	@echo "... tests/test_hello.i"
+	@echo "... tests/test_hello.s"
 .PHONY : help
 
 

@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+            cmake make g++ gcc libgtest-dev clang-tidy
+
+      - name: Configure project (ARM toolchain)
+        run: cmake -B build -DCMAKE_TOOLCHAIN_FILE=arm64-toolchain.cmake -DCMAKE_BUILD_TYPE=Coverage
+
+      - name: Build project
+        run: cmake --build build -- -j$(nproc)
+
+      - name: Run hello
+        run: ./build/hello
+
+      - name: Run tests (ctest)
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Run clang-tidy
+        run: clang-tidy hello.c -- -I.
+
+      - name: Run tests with XML report
+        run: ./build/test_hello --gtest_output=xml:build/results.xml
+
+      - name: Publish test results to GitHub
+        uses: dorny/test-reporter@v1
+        if: always() # ensure results are uploaded even if tests fail
+        with:
+          name: gtest-report
+          path: build/results.xml
+          reporter: jest-junit # compatible with gtest JUnit XML
+
+      - name: Generate coverage report
+        run: |
+          sudo apt-get install -y lcov
+          cd build
+          lcov --capture --directory . --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' --output-file coverage.info
+          lcov --list coverage.info
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: build/coverage.info
+          token: ${{ secrets.CODECOV_TOKEN }} # only needed for private repos

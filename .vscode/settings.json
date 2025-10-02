@@ -63,5 +63,15 @@
   "cmake.buildDirectory": "${workspaceFolder}/build",
   "cmake.configureArgs": [],
   "cmake.buildArgs": [],
-  "cmake.installPrefix": "${workspaceFolder}/install"
+  "cmake.installPrefix": "${workspaceFolder}/install",
+  "[c]": {
+    "editor.defaultFormatter": "xaver.clang-format"
+  },
+  "[cpp]": {
+    "editor.defaultFormatter": "xaver.clang-format"
+  },
+  "editor.formatOnSave": true,
+  "[yaml]": {
+  "editor.defaultFormatter": "redhat.vscode-yaml"
+}
 }
