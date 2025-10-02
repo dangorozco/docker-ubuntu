@@ -37,14 +37,15 @@ jobs:
         run: clang-tidy hello.c -- -I.
 
       - name: Run tests with XML report
-        run: ./build/test_hello --gtest_output=xml:build/results.xml
+        run: |
+          ./build/test_hello --gtest_output=xml:./build/results.xml
 
       - name: Publish test results to GitHub
         uses: dorny/test-reporter@v1
-        if: always() # ensure results are uploaded even if tests fail
+        if: always()
         with:
           name: gtest-report
-          path: build/results.xml
+          path: ./build/results.xml
           reporter: jest-junit # compatible with gtest JUnit XML
 
       - name: Generate coverage report
