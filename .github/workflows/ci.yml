@@ -19,7 +19,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-            cmake make g++ gcc libgtest-dev clang-tidy
+            cmake make g++ gcc libgtest-dev clang-tidy lcov
 
       - name: Configure project (ARM toolchain)
         run: cmake -B build -DCMAKE_TOOLCHAIN_FILE=arm64-toolchain.cmake -DCMAKE_BUILD_TYPE=Coverage
@@ -37,20 +37,21 @@ jobs:
         run: clang-tidy hello.c -- -I.
 
       - name: Run tests with XML report
-        run: |
-          ./build/test_hello --gtest_output=xml:./build/results.xml
+        run: ./build/test_hello --gtest_output=xml:build/results.xml
+
+      - name: List build directory (debug)
+        run: ls -la build
 
       - name: Publish test results to GitHub
         uses: dorny/test-reporter@v1
-        if: always()
+        if: always() # run even if tests fail
         with:
           name: gtest-report
-          path: ./build/results.xml
-          reporter: jest-junit # compatible with gtest JUnit XML
+          path: build/results.xml
+          reporter: jest-junit # gtest outputs JUnit-compatible XML
 
       - name: Generate coverage report
         run: |
-          sudo apt-get install -y lcov
           cd build
           lcov --capture --directory . --output-file coverage.info
           lcov --remove coverage.info '/usr/*' --output-file coverage.info
