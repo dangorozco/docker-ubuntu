@@ -60,8 +60,12 @@ jobs:
         run: cmake --build build-tests -- -j$(nproc)
 
       - name: Run tests (JUnit XML + coverage)
-        run: ./build-tests/test_hello --gtest_output=xml:build-tests/results.xml
-
+        run: |
+          # Ensure gcov data goes into build-tests
+          cd build-tests
+          ./test_hello --gtest_output=xml:results.xml
+          ls -la
+          find . -name "*.gc*"
       - name: List build-tests directory (debug)
         run: |
           ls -la build-tests
