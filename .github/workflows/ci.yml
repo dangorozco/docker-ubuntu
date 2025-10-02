@@ -7,6 +7,7 @@ on:
     branches: ["main"]
 
 jobs:
+  # ARM Cross-Compile Build (does not run tests)
   build:
     runs-on: ubuntu-22.04
 
@@ -14,11 +15,34 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install dependencies
+      - name: Install dependencies (cross-compile)
         run: |
           sudo apt-get update
           sudo apt-get install -y \
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+            cmake make clang-tidy
+
+      - name: Configure project (ARM toolchain)
+        run: cmake -B build -DCMAKE_TOOLCHAIN_FILE=arm64-toolchain.cmake -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build project (ARM)
+        run: cmake --build build -- -j$(nproc)
+
+      - name: Run clang-tidy
+        run: clang-tidy hello.c -- -I.
+
+  # Native GCC build for tests + coverage
+  test:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies (native)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
             cmake make g++ gcc libgtest-dev clang-tidy lcov
 
       - name: Build and install GoogleTest
@@ -28,38 +52,29 @@ jobs:
           sudo make -j$(nproc)
           sudo cp lib/*.a /usr/lib
 
-      - name: Configure project (ARM toolchain)
-        run: cmake -B build -DCMAKE_TOOLCHAIN_FILE=arm64-toolchain.cmake -DCMAKE_BUILD_TYPE=Coverage
+      - name: Configure project (native)
+        run: cmake -B build-tests -DCMAKE_BUILD_TYPE=Coverage
 
-      - name: Build project
-        run: cmake --build build -- -j$(nproc)
-
-      - name: Run hello
-        run: ./build/hello
-
-      - name: Run tests (ctest)
-        run: ctest --test-dir build --output-on-failure
-
-      - name: Run clang-tidy
-        run: clang-tidy hello.c -- -I.
+      - name: Build project (native)
+        run: cmake --build build-tests -- -j$(nproc)
 
       - name: Run tests with XML report
-        run: ./build/test_hello --gtest_output=xml:build/results.xml
+        run: ./build-tests/test_hello --gtest_output=xml:build-tests/results.xml
 
-      - name: List build directory (debug)
-        run: ls -la build
+      - name: List build-tests directory (debug)
+        run: ls -la build-tests
 
       - name: Publish test results to GitHub
         uses: dorny/test-reporter@v1
-        if: always() # run even if tests fail
+        if: always()
         with:
           name: gtest-report
-          path: build/results.xml
-          reporter: jest-junit # gtest outputs JUnit-compatible XML
+          path: build-tests/results.xml
+          reporter: jest-junit
 
       - name: Generate coverage report
         run: |
-          cd build
+          cd build-tests
           lcov --capture --directory . --output-file coverage.info
           lcov --remove coverage.info '/usr/*' --output-file coverage.info
           lcov --list coverage.info
@@ -67,5 +82,5 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          files: build/coverage.info
+          files: build-tests/coverage.info
           token: ${{ secrets.CODECOV_TOKEN }} # only needed for private repos
