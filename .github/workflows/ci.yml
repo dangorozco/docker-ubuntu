@@ -56,23 +56,13 @@ jobs:
             -DCMAKE_BUILD_TYPE=Coverage \
             -DCMAKE_C_FLAGS="--coverage -O0 -g -fprofile-arcs -ftest-coverage" \
             -DCMAKE_CXX_FLAGS="--coverage -O0 -g -fprofile-arcs -ftest-coverage"
-          echo "=== DEBUG: CMakeCache.txt build type ==="
-          grep CMAKE_BUILD_TYPE build-tests/CMakeCache.txt || echo "No CMAKE_BUILD_TYPE found"
 
       - name: Build project (native)
         run: cmake --build build-tests -- -j$(nproc)
 
       - name: Run tests (JUnit XML + coverage)
         working-directory: build-tests
-        run: |
-          ./test_hello --gtest_output=xml:results.xml
-          echo "Checking for coverage files..."
-          find . -name "*.gcda" || echo "No .gcda files found!"
-
-      - name: Verify coverage artifacts
-        run: |
-          echo "Verifying coverage files in build-tests"
-          find build-tests -name "*.gcda" || echo "Still no coverage files!"
+        run: ./test_hello --gtest_output=xml:results.xml
 
       - name: Publish test results to GitHub
         uses: dorny/test-reporter@v1
@@ -82,24 +72,13 @@ jobs:
           path: build-tests/results.xml
           reporter: jest-junit
 
-      - name: Generate coverage report
+      - name: Generate coverage report (HTML + info)
         run: |
           echo "Running lcov..."
           lcov --capture --directory build-tests --output-file build-tests/coverage.info
           lcov --remove build-tests/coverage.info '/usr/*' --output-file build-tests/coverage.info
           lcov --list build-tests/coverage.info
-
-      - name: Generate HTML coverage report
-        working-directory: build-tests
-        run: |
-          mkdir -p coverage_html
-          genhtml coverage.info --output-directory coverage_html
-
-      - name: Upload HTML coverage artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-html
-          path: build-tests/coverage_html
+          genhtml build-tests/coverage.info --output-directory build-tests/coverage-html
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
@@ -108,3 +87,11 @@ jobs:
           flags: unittests
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Deploy coverage report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build-tests/coverage-html
+          publish_branch: gh-pages
+          destination_dir: coverage
