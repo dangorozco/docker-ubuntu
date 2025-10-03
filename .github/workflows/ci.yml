@@ -51,10 +51,13 @@ jobs:
             cmake make g++ gcc libgtest-dev clang-tidy lcov
 
       - name: Configure project (native with coverage)
-        run: cmake -B build-tests \
-          -DCMAKE_BUILD_TYPE=Coverage \
-          -DCMAKE_C_FLAGS="--coverage -O0 -g -fprofile-arcs -ftest-coverage" \
-          -DCMAKE_CXX_FLAGS="--coverage -O0 -g -fprofile-arcs -ftest-coverage"
+        run: |
+          cmake -B build-tests \
+            -DCMAKE_BUILD_TYPE=Coverage \
+            -DCMAKE_C_FLAGS="--coverage -O0 -g -fprofile-arcs -ftest-coverage" \
+            -DCMAKE_CXX_FLAGS="--coverage -O0 -g -fprofile-arcs -ftest-coverage"
+          echo "=== DEBUG: CMakeCache.txt build type ==="
+          grep CMAKE_BUILD_TYPE build-tests/CMakeCache.txt || echo "No CMAKE_BUILD_TYPE found"
 
       - name: Build project (native)
         run: cmake --build build-tests -- -j$(nproc)
@@ -68,19 +71,16 @@ jobs:
           echo "=== DEBUG: FILES BEFORE RUN ==="
           find . -type f -name "*.gc*" || echo "No coverage files yet"
           echo "=== RUNNING TESTS ==="
-          export GCOV_PREFIX=$(pwd)
-          export GCOV_PREFIX_STRIP=2
-          export GCOV_TRACEFILE=$(pwd)/tracefile.gcda
           ./test_hello --gtest_output=xml:results.xml || echo "Test run failed"
           echo "=== DEBUG: FILES AFTER RUN ==="
           find . -type f -name "*.gc*" || echo "No coverage files generated"
-          pwd
-          ls -la
+          echo "=== LISTING BUILD DIR ==="
+          ls -R .
 
       - name: Verify coverage artifacts
         run: |
-          echo "=== VERIFY COVERAGE FILES (outside build-tests) ==="
-          find build-tests -type f -name "*.gc*" || echo "Still no coverage files!"
+          echo "=== VERIFY COVERAGE FILES (recursively in build-tests) ==="
+          find build-tests -type f \( -name "*.gcno" -o -name "*.gcda" \) || echo "Still no coverage files!"
 
       - name: Publish test results to GitHub
         uses: dorny/test-reporter@v1
@@ -93,9 +93,9 @@ jobs:
       - name: Generate coverage report
         run: |
           echo "=== DEBUG: LCOV START ==="
-          find build-tests -type f -name "*.gc*"
+          find build-tests -type f \( -name "*.gcno" -o -name "*.gcda" \)
           echo "Capturing with LCOV..."
-          lcov --capture --directory build-tests --output-file build-tests/coverage.info
+          lcov --capture --directory build-tests/CMakeFiles --output-file build-tests/coverage.info
           lcov --remove build-tests/coverage.info '/usr/*' --output-file build-tests/coverage.info
           echo "=== DEBUG: LCOV SUMMARY ==="
           lcov --list build-tests/coverage.info || echo "LCOV failed"

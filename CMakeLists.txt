@@ -22,6 +22,11 @@ if(NOT CMAKE_CROSSCOMPILING)
     add_test(NAME HelloTest COMMAND test_hello)
 endif()
 
+# Force build type if not set
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Coverage" CACHE STRING "" FORCE)
+endif()
+
 # Coverage support
 if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
     message(STATUS "Enabling code coverage flags")
