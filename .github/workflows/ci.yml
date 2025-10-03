@@ -68,7 +68,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: gtest-report
+          name: tests
           path: build-tests/results.xml
           reporter: jest-junit
 
