@@ -37,7 +37,7 @@ jobs:
         run: clang-tidy hello.c -- -I.
 
   # Native GCC build for tests + coverage
-  test:
+  coverage:
     runs-on: ubuntu-22.04
 
     steps:
@@ -68,7 +68,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: tests
+          name: unit tests
           path: build-tests/results.xml
           reporter: jest-junit
 
