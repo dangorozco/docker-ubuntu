@@ -101,3 +101,4 @@ jobs:
           files: build-tests/coverage.info
           flags: unittests
           fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
