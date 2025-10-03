@@ -18,7 +18,7 @@ endif()
 if(NOT CMAKE_CROSSCOMPILING)
     enable_testing()
     add_executable(test_hello tests/test_hello.cpp hello.c)
-    target_link_libraries(test_hello gtest gtest_main pthread)
+    target_link_libraries(test_hello PRIVATE gtest gtest_main pthread)
     add_test(NAME HelloTest COMMAND test_hello)
 endif()
 

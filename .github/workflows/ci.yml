@@ -82,14 +82,13 @@ jobs:
           reporter: jest-junit
 
       - name: Generate coverage report
-        working-directory: build-tests
         run: |
           echo "Looking for .gcda before lcov"
-          find . -name "*.gc*"
-          # Capture coverage recursively from all build outputs
-          lcov --capture --directory . --output-file coverage.info
-          lcov --remove coverage.info '/usr/*' --output-file coverage.info
-          lcov --list coverage.info
+          find build-tests -name "*.gc*"
+          # Capture coverage recursively from build-tests directory
+          lcov --capture --directory build-tests --output-file build-tests/coverage.info
+          lcov --remove build-tests/coverage.info '/usr/*' --output-file build-tests/coverage.info
+          lcov --list build-tests/coverage.info
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
