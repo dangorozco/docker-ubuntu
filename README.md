@@ -9,7 +9,7 @@ This repo demonstrates ARM cross-compilation, GoogleTest, and CI/CD with GitHub 
 [![tests](https://img.shields.io/github/actions/workflow/status/dangorozco/docker-ubuntu/ci.yml?label=tests&job=tests)](https://github.com/dangorozco/docker-ubuntu/actions?query=workflow%3ACI+branch%3Amain)
 
 This badge reflects the status of the **GoogleTest suite** (`results.xml`) executed in the `tests` job.  
-Clicking the badge will take you to the **CI workflow runs page**, where you can open the latest run **tests** to view detailed GoogleTest results.
+Clicking the badge will take you to the **CI workflow runs page**, where you can open the latest run **unit tests** to view detailed GoogleTest results.
 
 ---
 
