@@ -89,6 +89,18 @@ jobs:
           lcov --remove build-tests/coverage.info '/usr/*' --output-file build-tests/coverage.info
           lcov --list build-tests/coverage.info
 
+      - name: Generate HTML coverage report
+        working-directory: build-tests
+        run: |
+          mkdir -p coverage_html
+          genhtml coverage.info --output-directory coverage_html
+
+      - name: Upload HTML coverage artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-html
+          path: build-tests/coverage_html
+
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
