@@ -89,14 +89,8 @@ jobs:
           lcov --remove build-tests/coverage.info '/usr/*' --output-file build-tests/coverage.info
           lcov --list build-tests/coverage.info
 
-      - name: Show coverage.info
-        run: |
-          echo "=== DEBUG: coverage.info ==="
-          ls -lh build-tests/coverage.info
-          head -n 20 build-tests/coverage.info || echo "File empty"
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
         with:
           files: build-tests/coverage.info
           flags: unittests
