@@ -70,9 +70,12 @@ jobs:
           echo "=== RUNNING TESTS ==="
           export GCOV_PREFIX=$(pwd)
           export GCOV_PREFIX_STRIP=2
+          export GCOV_TRACEFILE=$(pwd)/tracefile.gcda
           ./test_hello --gtest_output=xml:results.xml || echo "Test run failed"
           echo "=== DEBUG: FILES AFTER RUN ==="
           find . -type f -name "*.gc*" || echo "No coverage files generated"
+          pwd
+          ls -la
 
       - name: Verify coverage artifacts
         run: |
